@@ -170,7 +170,7 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
       result.error("bluetooth_unavailable", "the device does not have bluetooth", null);
       return;
     }
-
+    Map<String, Object> args = call.arguments();
     switch (call.method){
       case "state":
         state(result);
