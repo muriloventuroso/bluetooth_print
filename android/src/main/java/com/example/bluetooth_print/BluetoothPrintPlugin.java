@@ -446,8 +446,8 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
   }
 
     private void printRawBytes(Result result, Map<String, Object> args) {
-    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id) == null ||
-            !DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getConnState()) {
+    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress) == null ||
+            !DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getConnState()) {
 
       result.error("not connect", "state not right", null);
     }
@@ -464,12 +464,12 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
       threadPool.addSerialTask(new Runnable() {
         @Override
         public void run() {
-          if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.ESC) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
-          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.TSC) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
-          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.CPCL) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
+          if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.ESC) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
+          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.TSC) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
+          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.CPCL) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
           }
         }
       });
