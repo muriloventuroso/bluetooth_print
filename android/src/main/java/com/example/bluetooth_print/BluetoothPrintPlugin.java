@@ -211,7 +211,7 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
         break;
       case "rawBytes":
         Log.i("NATIVE","rawBytes");
-        printRawBytes(result, args);
+        printRawBytes(result,args);
         break;
       case "print":
       case "printReceipt":
@@ -446,6 +446,11 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
   }
 
     private void printRawBytes(Result result, Map<String, Object> args) {
+    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id) == null ||
+            !DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getConnState()) {
+
+      result.error("not connect", "state not right", null);
+    }
 
     if (args.containsKey("config") && args.containsKey("data")) {
       final Map<String,Object> config = (Map<String,Object>)args.get("config");
@@ -459,7 +464,13 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
       threadPool.addSerialTask(new Runnable() {
         @Override
         public void run() {
-          
+          if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.ESC) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
+          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.TSC) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
+          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).getCurrentPrinterCommand() == PrinterCommand.CPCL) {
+            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(id).sendByteDataImmediately(bytes);
+          }
         }
       });
     }else{
