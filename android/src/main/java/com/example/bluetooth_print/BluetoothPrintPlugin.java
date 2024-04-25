@@ -384,7 +384,10 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
 
   private void printTest(Result result) {
     final DeviceConnFactoryManager deviceConnFactoryManager = DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress);
-    if (deviceConnFactoryManager == null || !deviceConnFactoryManager.getConnState()) {
+    if (deviceConnFactoryManager == null) {
+      result.error("not connect", "manager not found", null);
+    }
+    if (!deviceConnFactoryManager.getConnState()){
       result.error("not connect", "state not right", null);
     }
 
@@ -412,7 +415,10 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
     Map<String, Object> args = call.arguments();
 
     final DeviceConnFactoryManager deviceConnFactoryManager = DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress);
-    if (deviceConnFactoryManager == null || !deviceConnFactoryManager.getConnState()) {
+    if (deviceConnFactoryManager == null) {
+      result.error("not connect", "manager not found", null);
+    }
+    if (!deviceConnFactoryManager.getConnState()){
       result.error("not connect", "state not right", null);
     }
 
@@ -446,9 +452,11 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
   }
 
     private void printRawBytes(Result result, Map<String, Object> args) {
-    if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress) == null ||
-            !DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getConnState()) {
-
+    final DeviceConnFactoryManager deviceConnFactoryManager = DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress);
+    if (deviceConnFactoryManager == null) {
+      result.error("not connect", "manager not found", null);
+    }
+    if (!deviceConnFactoryManager.getConnState()){
       result.error("not connect", "state not right", null);
     }
 
@@ -464,12 +472,12 @@ public class BluetoothPrintPlugin implements FlutterPlugin, ActivityAware, Metho
       threadPool.addSerialTask(new Runnable() {
         @Override
         public void run() {
-          if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.ESC) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
-          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.TSC) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
-          }else if (DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).getCurrentPrinterCommand() == PrinterCommand.CPCL) {
-            DeviceConnFactoryManager.getDeviceConnFactoryManagers().get(curMacAddress).sendByteDataImmediately(bytes);
+          if (deviceConnFactoryManager.getCurrentPrinterCommand() == PrinterCommand.ESC) {
+            deviceConnFactoryManager.sendByteDataImmediately(bytes);
+          }else if (deviceConnFactoryManager.getCurrentPrinterCommand() == PrinterCommand.TSC) {
+            deviceConnFactoryManager.sendByteDataImmediately(bytes);
+          }else if (deviceConnFactoryManager.getCurrentPrinterCommand() == PrinterCommand.CPCL) {
+            deviceConnFactoryManager.sendByteDataImmediately(bytes);
           }
         }
       });
